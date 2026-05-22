@@ -14,6 +14,7 @@ struct EventbriteEvent {
     image: String,
     description: String,
     status: String,
+    sales_status: String,
     listed: bool,
 }
 
@@ -69,11 +70,18 @@ impl EventbriteEvent {
             description: event["description"]["text"].as_str().unwrap().to_owned(),
             status: event["status"].as_str().unwrap().to_owned(),
             listed: event["listed"].as_bool().unwrap(),
+            sales_status: event["event_sales_status"]["sales_status"]
+                .as_str()
+                .unwrap()
+                .to_owned(),
         }
     }
 
     fn active(&self) -> bool {
-        self.status == "live" && self.listed && within_one_week(self.opens.date_naive())
+        self.status == "live"
+            && self.listed
+            && within_one_week(self.opens.date_naive())
+            && self.sales_status == "on_sale"
     }
 }
 
@@ -200,7 +208,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Get all (visible) eventbrite events.
     let body = ureq::get(format!(
-        "https://www.eventbriteapi.com/v3/organizers/{}/events/",
+        "https://www.eventbriteapi.com/v3/organizers/{}/events/?expand=event_sales_status",
         args.organizer_id
     ))
     .header("Authorization", format!("Bearer {}", args.eventbrite_key))
