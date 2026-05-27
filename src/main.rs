@@ -52,6 +52,8 @@ struct Message {
     embeds: Vec<Embed>,
     mention_roles: Option<Vec<u64>>,
     allowed_mentions: Option<EmbedAllowedMentions>,
+    avatar_url: Option<String>,
+    username: Option<String>,
 }
 
 fn within_one_week(date: NaiveDate) -> bool {
@@ -122,6 +124,12 @@ struct Args {
     /// Directory where data is stored.
     #[arg(short, long, env="EVENTBRITE_DATA_DIR", default_value_t = String::from("./"))]
     data_dir: String,
+
+    #[arg(long, env="AVATAR_URL")]
+    avatar_url: Option<String>,
+
+    #[arg(long, env="DISCORD_USERNAME")]
+    discord_username: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -261,6 +269,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             allowed_mentions: Some(EmbedAllowedMentions {
                                 parse: vec!["roles".to_string()],
                             }),
+                            avatar_url: args.avatar_url.clone(),
+                            username: args.discord_username.clone(),
                         })?;
 
                         println!("Sent notification for event {}.", event.id);
