@@ -24,6 +24,7 @@
       in rec {
         defaultPackage = naersk'.buildPackage {
           src = ./.;
+          meta.mainProgram = "eventbrite_riichi";
         };
 
         devShell = pkgs.mkShell {
