@@ -1,5 +1,6 @@
 [package]
 name = "eventbrite_riichi"
+description = "Automatically notifies a discord when the eventbrite is updated."
 version = "0.3.0"
 edition = "2021"
 
